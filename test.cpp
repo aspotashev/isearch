@@ -2,10 +2,11 @@
 #include <string>
 #include <fstream>
 #include <iostream>
+#include <vector>
 
 using namespace std;
 
-map<string, int> db;
+vector<pair<string, int> > db;
 
 int main()
 {
@@ -25,14 +26,14 @@ int main()
 	for (int i = 0; i < 100000 /*((int)input.size() - 1)*/; i ++)
 	{
 		string s = input.substr(i, 20);
-		db[s] = i;
+		db.push_back(make_pair(s, i));
 	}
 
-	map<string, int>::iterator iter = db.lower_bound(string("Hello"));
-	for (int i = 0; i < 5; i ++, iter ++)
-	{
-		cout << "key: " << iter->first << endl;
-	}
+//	map<string, int>::iterator iter = db.lower_bound(string("Hello"));
+//	for (int i = 0; i < 5; i ++, iter ++)
+//	{
+//		cout << "key: " << iter->first << endl;
+//	}
 
 	return 0;
 }
