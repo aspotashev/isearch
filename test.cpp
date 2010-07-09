@@ -9,17 +9,16 @@ using namespace std;
 
 vector<pair<string, int> > db;
 vector<int> db_i;
+string input;
 
 bool myfunction(int i, int j)
 {
 	cout << "i = " << i << ", j = " << j << endl;
-	return true;
+	return input.substr(i, 20) < string("hello");
 }
 
 int main()
 {
-	string input;
-
 	ifstream fin("input");
 	while (!fin.eof())
 	{
