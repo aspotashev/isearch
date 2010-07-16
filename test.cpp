@@ -6,9 +6,13 @@
 #include <vector>
 #include <algorithm>
 
+#include <iconv.h>
+
 using namespace std;
 
 vector<int> db;
+
+//typedef short int char_t;
 
 //bool myfunction(int i, int j)
 //{
@@ -38,7 +42,31 @@ void read_dump()
 
 bool compare_input_substrings(int i, int j)
 {
-	return wcscmp(input + i, input + j) < 0;
+	return input[i] < input[j];
+//	return wcscmp(input + i, input + j) < 0;
+}
+
+void print_unicode(void *s, int chars)
+{
+	char buf[200];
+
+	size_t inbytesleft = 2*chars;
+	size_t outbytesleft = 200;
+	char *input_part = (char *)s;
+	char *output_part = buf;
+
+	iconv_t cd = iconv_open("UTF-8", "UCS-2");
+	iconv(cd, &input_part, &inbytesleft, &output_part, &outbytesleft);
+	iconv_close(cd);
+
+	*output_part = '\0';
+
+	printf("TEXT: %s\n", buf);
+	printf("     ");
+	for (int i = 0; i < 10; i ++)
+	{
+		printf("%04x ", ((wchar_t *)s)[i]);
+	}
 }
 
 int main()
@@ -53,6 +81,15 @@ int main()
 	}
 
 	sort(db.begin(), db.end(), compare_input_substrings);
+	for (int i = 0; i < input_sz - 1; i ++)
+	{
+//		assert(!compare_input_substrings(i+1, i));
+	}
+
+	for (int i = 0; i < 700; i ++)
+	{
+		print_unicode(input + db[i], 20);
+	}
 
 //	vector<int>::iterator iter = lower_bound(db_i.begin(), db_i.end(), -1, myfunction);
 //	for (int i = 0; i < 5; i ++, iter ++)
