@@ -12,7 +12,7 @@ using namespace std;
 
 vector<int> db;
 
-//typedef short int char_t;
+typedef short int char_t;
 
 //bool myfunction(int i, int j)
 //{
@@ -20,7 +20,7 @@ vector<int> db;
 //	return input.substr(i, 20) < string("hello");
 //}
 
-wchar_t *input;
+char_t *input;
 int input_sz;
 
 void read_dump()
@@ -34,7 +34,7 @@ void read_dump()
 	input_sz = (int)(sz / 2);
 
 	rewind(f);
-	input = new wchar_t[input_sz];
+	input = new char_t[input_sz];
 	fread(input, 1, sz, f);
 
 	fclose(f);
@@ -42,7 +42,22 @@ void read_dump()
 
 bool compare_input_substrings(int i, int j)
 {
-	return input[i] < input[j];
+	if (i == j)
+		return false;
+
+	if (input[i] < input[j])
+	{
+		return true;
+	}
+	else if (input[i] > input[j])
+	{
+		return false;
+	}
+	else
+	{
+		return compare_input_substrings(i + 1, j + 1);
+	}
+
 //	return wcscmp(input + i, input + j) < 0;
 }
 
@@ -61,12 +76,13 @@ void print_unicode(void *s, int chars)
 
 	*output_part = '\0';
 
-	printf("TEXT: %s\n", buf);
+	printf("TEXT: %s", buf);
 	printf("     ");
 	for (int i = 0; i < 10; i ++)
 	{
-		printf("%04x ", ((wchar_t *)s)[i]);
+		printf("%04x ", ((char_t *)s)[i]);
 	}
+	printf("\n");
 }
 
 int main()
@@ -86,7 +102,7 @@ int main()
 //		assert(!compare_input_substrings(i+1, i));
 	}
 
-	for (int i = 0; i < 700; i ++)
+	for (int i = 0; i < input_sz; i ++)
 	{
 		print_unicode(input + db[i], 20);
 	}
