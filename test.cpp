@@ -22,6 +22,7 @@ typedef short int char_t;
 
 char_t *input;
 int input_sz;
+map<int, string> pos_to_src;
 
 void read_dump()
 {
@@ -36,6 +37,24 @@ void read_dump()
 	rewind(f);
 	input = new char_t[input_sz];
 	fread(input, 1, sz, f);
+
+	fclose(f);
+}
+
+void read_dump_map()
+{
+	FILE *f = fopen("../dump-map.txt", "r");
+
+	int pos;
+	char s[200];
+	while(1)
+	{
+		fscanf(f, "%d %s", &pos, s);
+		if (feof(f))
+			break;
+
+		pos_to_src[pos] = string(s);
+	}
 
 	fclose(f);
 }
@@ -82,12 +101,19 @@ void print_unicode(void *s, int chars)
 	{
 		printf("%04x ", ((char_t *)s)[i]);
 	}
+
+	int index = (char_t *)s - input;
+	map<int, string>::iterator it = pos_to_src.upper_bound(index);
+	printf("     %d, %s", it->first, it->second.c_str());
+
 	printf("\n");
 }
 
 int main()
 {
 	read_dump();
+
+	read_dump_map();
 
 	cout << "Input size: " << input_sz << " chars" << endl;
 
