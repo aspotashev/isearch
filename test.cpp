@@ -104,6 +104,7 @@ void print_unicode(void *s, int chars)
 
 	int index = (char_t *)s - input;
 	map<int, string>::iterator it = pos_to_src.upper_bound(index);
+	it --;
 	printf("     %d, %s", it->first, it->second.c_str());
 
 	printf("\n");
