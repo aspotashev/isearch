@@ -134,18 +134,6 @@ int main()
 		print_unicode(input + db[i], 20);
 	}
 
-//	vector<int>::iterator iter = lower_bound(db_i.begin(), db_i.end(), -1, myfunction);
-//	for (int i = 0; i < 5; i ++, iter ++)
-//	{
-//		cout << "res: " << *iter << "      ---> " << input.substr(*iter, 20) << endl;
-//	}
-
-//	map<string, int>::iterator iter = db.lower_bound(string("Hello"));
-//	for (int i = 0; i < 5; i ++, iter ++)
-//	{
-//		cout << "key: " << iter->first << endl;
-//	}
-
 	return 0;
 }
 
