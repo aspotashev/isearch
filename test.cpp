@@ -1,18 +1,8 @@
-#include <assert.h>
-#include <map>
-#include <string>
-#include <fstream>
-#include <iostream>
-#include <vector>
-#include <algorithm>
-
-#include <iconv.h>
+#include "lib.cpp"
 
 using namespace std;
 
 vector<int> db;
-
-typedef short int char_t;
 
 //bool myfunction(int i, int j)
 //{
