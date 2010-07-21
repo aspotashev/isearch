@@ -72,3 +72,21 @@ bool compare_input_substrings(int i, int j)
 //	return wcscmp(input + i, input + j) < 0;
 }
 
+void init_search()
+{
+	read_dump();
+	read_dump_map();
+
+	for (int i = 0; i < input_sz; i ++)
+	{
+		db.push_back(i);
+	}
+
+	sort(db.begin(), db.end(), compare_input_substrings);
+
+	for (int i = 0; i < input_sz - 1; i ++)
+	{
+//		assert(!compare_input_substrings(i+1, i));
+	}
+}
+

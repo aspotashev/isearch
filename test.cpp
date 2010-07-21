@@ -34,22 +34,8 @@ void print_unicode(void *s, int chars)
 
 int main()
 {
-	read_dump();
+	init_search();
 
-	read_dump_map();
-
-	cout << "Input size: " << input_sz << " chars" << endl;
-
-	for (int i = 0; i < input_sz; i ++)
-	{
-		db.push_back(i);
-	}
-
-	sort(db.begin(), db.end(), compare_input_substrings);
-	for (int i = 0; i < input_sz - 1; i ++)
-	{
-//		assert(!compare_input_substrings(i+1, i));
-	}
 
 	for (int i = 0; i < input_sz; i ++)
 	{
