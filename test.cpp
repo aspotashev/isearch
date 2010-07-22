@@ -25,7 +25,7 @@ void print_unicode(void *s, int chars)
 	}
 
 	int index = (char_t *)s - input;
-	printf("     %s", search_run(index));
+	printf("     %s", index_to_string_id(index));
 
 	printf("\n");
 }

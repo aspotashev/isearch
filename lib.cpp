@@ -90,7 +90,7 @@ void init_search()
 	}
 }
 
-const char *search_run(int index)
+const char *index_to_string_id(int index)
 {
 	std::map<int, std::string>::iterator it = pos_to_src.upper_bound(index);
 	it --;
