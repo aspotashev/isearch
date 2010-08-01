@@ -51,25 +51,30 @@ void read_dump_map()
 	fclose(f);
 }
 
-bool compare_input_substrings(int i, int j)
+bool compare_unicode_strings(const char_t *a, const char_t *b)
 {
-	if (i == j)
-		return false;
-
-	if (input[i] < input[j])
+	if (*a < *b)
 	{
 		return true;
 	}
-	else if (input[i] > input[j])
+	else if (*b > *a)
 	{
 		return false;
 	}
 	else
 	{
-		return compare_input_substrings(i + 1, j + 1);
+		return compare_unicode_strings(a + 1, b + 1);
 	}
 
 //	return wcscmp(input + i, input + j) < 0;
+}
+
+bool compare_input_substrings(int i, int j)
+{
+	if (i == j)
+		return false;
+
+	return compare_unicode_strings(input + i, input + j);
 }
 
 void init_search()
