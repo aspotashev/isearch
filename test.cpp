@@ -40,7 +40,7 @@ int main()
 		print_unicode(input + db[i], 20);
 	}
 
-	printf("%d\n", find_index_by_string("ho"));
+	printf("%s\n", find_string_id_by_str("ho"));
 
 	return 0;
 }

@@ -163,6 +163,11 @@ int find_index_by_string(char *s)
 
 	search_pattern_string = s_unicode;
 	std::vector<int>::iterator iter = lower_bound(db.begin(), db.end(), -1, compare_for_binary_search);
-	return iter - db.begin();
+	return *iter;
+}
+
+const char *find_string_id_by_str(char *s)
+{
+	return index_to_string_id(find_index_by_string(s));
 }
 
