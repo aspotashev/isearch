@@ -1,4 +1,4 @@
-#include "lib.cpp"
+#include "lib.h"
 
 using namespace std;
 
@@ -39,6 +39,8 @@ int main()
 	{
 		print_unicode(input + db[i], 20);
 	}
+
+	printf("%d\n", find_index_by_string("ho"));
 
 	return 0;
 }
