@@ -32,7 +32,7 @@ void print_unicode(void *s, int chars)
 
 int main()
 {
-	init_search();
+	init_search("../dump.dat", "../dump-map.txt");
 
 
 //	for (int i = 0; i < input_sz; i ++)

@@ -16,9 +16,9 @@ char_t *input;
 int input_sz; // in characters
 std::map<int, std::string> pos_to_src;
 
-void read_dump()
+void read_dump(const char *f_dump)
 {
-	FILE *f = fopen("../dump.dat", "rb");
+	FILE *f = fopen(f_dump, "rb");
 
 	fseek(f, 0, SEEK_END);
 	long sz = ftell(f);
@@ -33,9 +33,9 @@ void read_dump()
 	fclose(f);
 }
 
-void read_dump_map()
+void read_dump_map(const char *f_map)
 {
-	FILE *f = fopen("../dump-map.txt", "r");
+	FILE *f = fopen(f_map, "r");
 
 	int pos;
 	char s[200];
@@ -96,10 +96,10 @@ bool compare_input_substrings(int i, int j)
 	return compare_unicode_strings(input + i, input + j);
 }
 
-void init_search()
+void init_search(const char *f_dump, const char *f_map)
 {
-	read_dump();
-	read_dump_map();
+	read_dump(f_dump);
+	read_dump_map(f_map);
 
 	for (int i = 0; i < input_sz; i ++)
 	{
