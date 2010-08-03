@@ -75,7 +75,7 @@ bool compare_unicode_strings(const char_t *a, const char_t *b)
 
 bool compare_input_substrings(int i, int j)
 {
-	printf("i = %d, j = %d\n", i, j);
+//	printf("i = %d, j = %d\n", i, j);
 
 	if (!(i >= 0 && i < input_sz))
 	{
@@ -104,14 +104,6 @@ void init_search()
 	for (int i = 0; i < input_sz; i ++)
 	{
 		db.push_back(i);
-	}
-
-	printf("sz = %d\n", db.size());
-
-
-	for (std::vector<int>::iterator i = db.begin(); i != db.end(); i ++)
-	{
-		assert(*i < 1000);
 	}
 
 	sort(db.begin(), db.end(), compare_input_substrings);
