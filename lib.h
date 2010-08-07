@@ -19,6 +19,7 @@ std::map<int, std::string> pos_to_src;
 void read_dump(const char *f_dump)
 {
 	FILE *f = fopen(f_dump, "rb");
+	assert(f);
 
 	fseek(f, 0, SEEK_END);
 	long sz = ftell(f);
@@ -28,7 +29,7 @@ void read_dump(const char *f_dump)
 
 	rewind(f);
 	input = new char_t[input_sz];
-	fread(input, 1, sz, f);
+	assert(fread(input, 1, sz, f) == sz);
 
 	fclose(f);
 }
@@ -41,9 +42,10 @@ void read_dump_map(const char *f_map)
 	char s[200];
 	while(1)
 	{
-		fscanf(f, "%d %s", &pos, s);
+		int n_read = fscanf(f, "%d %s", &pos, s);
 		if (feof(f))
 			break;
+		assert(n_read == 2);
 
 		pos_to_src[pos] = std::string(s);
 	}
@@ -136,7 +138,7 @@ bool compare_for_binary_search(int i, int j)
 	return compare_unicode_strings(input + i, search_pattern_string);
 }
 
-int find_index_by_string(char *s)
+int get_internal_index_by_string(char *s)
 {
 	char_t s_unicode[202];
 
@@ -155,7 +157,17 @@ int find_index_by_string(char *s)
 
 	search_pattern_string = s_unicode;
 	std::vector<int>::iterator iter = lower_bound(db.begin(), db.end(), -1, compare_for_binary_search);
-	return *iter;
+	return iter - db.begin();
+}
+
+const char *get_msg_id_by_internal_index(int index)
+{
+	return index_to_string_id(db[index]);
+}
+
+int find_index_by_string(char *s)
+{
+	return db[get_internal_index_by_string(s)];
 }
 
 const char *find_string_id_by_str(char *s)
