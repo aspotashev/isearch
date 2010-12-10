@@ -102,109 +102,17 @@ private:
 class ISearch
 {
 public:
-	void read_dump(const char *f_dump)
-	{
-		FILE *f = fopen(f_dump, "rb");
-		assert(f);
 
-		fseek(f, 0, SEEK_END);
-		long sz = ftell(f);
+	void init_search(const char *f_dump, const char *f_map);
+	const char *find_string_id_by_str(char *s);
+	int get_internal_index_by_string(char *s);
+	const char *get_msg_id_by_internal_index(int index);
 
-		assert(sz % 2 == 0);
-		input_sz = (int)(sz / 2);
-
-		rewind(f);
-		input = new char_t[input_sz];
-		assert(fread(input, 1, sz, f) == sz);
-
-		fclose(f);
-	}
-
-	void read_dump_map(const char *f_map)
-	{
-		FILE *f = fopen(f_map, "r");
-
-		int pos;
-		char s[200];
-		while(1)
-		{
-			int n_read = fscanf(f, "%d %s", &pos, s);
-			if (feof(f))
-				break;
-			assert(n_read == 2);
-
-			pos_to_src[pos] = std::string(s);
-		}
-
-		fclose(f);
-	}
-
-	void init_search(const char *f_dump, const char *f_map)
-	{
-		read_dump(f_dump);
-		read_dump_map(f_map);
-
-		for (int i = 0; i < input_sz; i ++)
-		{
-			db.push_back(i);
-		}
-
-		sort(db.begin(), db.end(), CmpInputSubstrings(input, input_sz));
-
-		CmpInputSubstrings comparator(input, input_sz);
-		for (int i = 0; i < input_sz - 1; i ++)
-		{
-			if (comparator(db[i+1], db[i]))
-			{
-	//			printf("i = %d, i+1 = %d, input[i] = %04x, input[i+1] = %04x\n", i, i+1, input[i], input[i+1]);
-				assert(0);
-			}
-		}
-	}
-
-	const char *index_to_string_id(int index)
-	{
-		std::map<int, std::string>::iterator it = pos_to_src.upper_bound(index);
-		it --;
-		return it->second.c_str();
-	}
-
-	int get_internal_index_by_string(char *s)
-	{
-		char_t s_unicode[202];
-
-	// encode to UCS-2
-		size_t inbytesleft = 10000000;
-		size_t outbytesleft = 200;
-		char *input_part = s;
-		char *output_part = (char *)s_unicode;
-
-		iconv_t cd = iconv_open("UCS-2", "UTF-8");
-		iconv(cd, &input_part, &inbytesleft, &output_part, &outbytesleft);
-		iconv_close(cd);
-
-		*output_part = '\0';
-	//----------------
-
-		std::vector<int>::iterator iter = lower_bound(db.begin(), db.end(), -1, CmpForBinarySearch(input, input_sz, s_unicode));
-		return iter - db.begin();
-	}
-
-	const char *get_msg_id_by_internal_index(int index)
-	{
-		return index_to_string_id(db[index]);
-	}
-
-	int find_index_by_string(char *s)
-	{
-		return db[get_internal_index_by_string(s)];
-	}
-
-	const char *find_string_id_by_str(char *s)
-	{
-		return index_to_string_id(find_index_by_string(s));
-	}
-
+private:
+	void read_dump(const char *f_dump);
+	void read_dump_map(const char *f_map);
+	const char *index_to_string_id(int index);
+	int find_index_by_string(char *s);
 
 private:
 	char_t *input;
@@ -215,7 +123,112 @@ private:
 };
 
 
-// -------------------
+// ------------------- ISearch: methods ----------------
+
+void ISearch::read_dump(const char *f_dump)
+{
+	FILE *f = fopen(f_dump, "rb");
+	assert(f);
+
+	fseek(f, 0, SEEK_END);
+	long sz = ftell(f);
+
+	assert(sz % 2 == 0);
+	input_sz = (int)(sz / 2);
+
+	rewind(f);
+	input = new char_t[input_sz];
+	assert(fread(input, 1, sz, f) == sz);
+
+	fclose(f);
+}
+
+void ISearch::read_dump_map(const char *f_map)
+{
+	FILE *f = fopen(f_map, "r");
+
+	int pos;
+	char s[200];
+	while(1)
+	{
+		int n_read = fscanf(f, "%d %s", &pos, s);
+		if (feof(f))
+			break;
+		assert(n_read == 2);
+
+		pos_to_src[pos] = std::string(s);
+	}
+
+	fclose(f);
+}
+
+void ISearch::init_search(const char *f_dump, const char *f_map)
+{
+	read_dump(f_dump);
+	read_dump_map(f_map);
+
+	for (int i = 0; i < input_sz; i ++)
+	{
+		db.push_back(i);
+	}
+
+	sort(db.begin(), db.end(), CmpInputSubstrings(input, input_sz));
+
+	CmpInputSubstrings comparator(input, input_sz);
+	for (int i = 0; i < input_sz - 1; i ++)
+	{
+		if (comparator(db[i+1], db[i]))
+		{
+//			printf("i = %d, i+1 = %d, input[i] = %04x, input[i+1] = %04x\n", i, i+1, input[i], input[i+1]);
+			assert(0);
+		}
+	}
+}
+
+const char *ISearch::index_to_string_id(int index)
+{
+	std::map<int, std::string>::iterator it = pos_to_src.upper_bound(index);
+	it --;
+	return it->second.c_str();
+}
+
+int ISearch::get_internal_index_by_string(char *s)
+{
+	char_t s_unicode[202];
+
+// encode to UCS-2
+	size_t inbytesleft = 10000000;
+	size_t outbytesleft = 200;
+	char *input_part = s;
+	char *output_part = (char *)s_unicode;
+
+	iconv_t cd = iconv_open("UCS-2", "UTF-8");
+	iconv(cd, &input_part, &inbytesleft, &output_part, &outbytesleft);
+	iconv_close(cd);
+
+	*output_part = '\0';
+//----------------
+
+	std::vector<int>::iterator iter = lower_bound(db.begin(), db.end(), -1, CmpForBinarySearch(input, input_sz, s_unicode));
+	return iter - db.begin();
+}
+
+const char *ISearch::get_msg_id_by_internal_index(int index)
+{
+	return index_to_string_id(db[index]);
+}
+
+int ISearch::find_index_by_string(char *s)
+{
+	return db[get_internal_index_by_string(s)];
+}
+
+const char *ISearch::find_string_id_by_str(char *s)
+{
+	return index_to_string_id(find_index_by_string(s));
+}
+
+//------------------- simple functions -----------------
 
 ISearch isearch_instance;
 
