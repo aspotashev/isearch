@@ -128,6 +128,9 @@ private:
 		}
 	}
 
+	void check_search_index_correctness();
+	void setup_search_index(const char *f_index);
+
 private:
 	char_t *input;
 	int input_sz; // in characters
@@ -176,20 +179,9 @@ void ISearch::read_dump_map(const char *f_map)
 	fclose(f);
 }
 
-void ISearch::init_search(const char *f_dump, const char *f_index, const char *f_map)
+// check that the substrings go in alphabetical order
+void ISearch::check_search_index_correctness()
 {
-	read_dump(f_dump);
-	read_dump_map(f_map);
-
-	db = new int [input_sz];
-
-	for (int i = 0; i < input_sz; i ++)
-	{
-		db[i] = i;
-	}
-
-	std::sort(db, db + input_sz, CmpInputSubstrings(input, input_sz));
-
 	CmpInputSubstrings comparator(input, input_sz);
 	for (int i = 0; i < input_sz - 1; i ++)
 	{
@@ -199,6 +191,28 @@ void ISearch::init_search(const char *f_dump, const char *f_index, const char *f
 			assert(0);
 		}
 	}
+}
+
+void ISearch::setup_search_index(const char *f_index)
+{
+	db = new int [input_sz];
+
+	for (int i = 0; i < input_sz; i ++)
+	{
+		db[i] = i;
+	}
+
+	std::sort(db, db + input_sz, CmpInputSubstrings(input, input_sz));
+
+	check_search_index_correctness();
+}
+
+void ISearch::init_search(const char *f_dump, const char *f_index, const char *f_map)
+{
+	read_dump(f_dump);
+	read_dump_map(f_map);
+
+	setup_search_index(f_index);
 }
 
 const char *ISearch::index_to_string_id(int index)
