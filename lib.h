@@ -36,29 +36,6 @@ bool compare_unicode_strings(const char_t *a, const char_t *b)
 	}
 }
 
-bool compare_input_substrings(int i, int j)
-{
-//	printf("i = %d, j = %d\n", i, j);
-
-	if (!(i >= 0 && i < input_sz))
-	{
-		printf("------------------\n");
-		assert(0);
-	}
-	if (!(j >= 0 && j < input_sz))
-	{
-		printf("------------------\n");
-		assert(0);
-	}
-	fflush(stdout);
-
-
-	if (i == j)
-		return false;
-
-	return compare_unicode_strings(input + i, input + j);
-}
-
 char_t *search_pattern_string;
 
 class CmpForBinarySearch
@@ -73,6 +50,37 @@ public:
 		assert(j == -1);
 
 		return compare_unicode_strings(input + i, search_pattern_string);
+	}
+};
+
+class CmpInputSubstrings
+{
+public:
+	CmpInputSubstrings()
+	{
+	}
+
+	bool operator() (int i, int j)
+	{
+	//	printf("i = %d, j = %d\n", i, j);
+
+		if (!(i >= 0 && i < input_sz))
+		{
+			printf("------------------\n");
+			assert(0);
+		}
+		if (!(j >= 0 && j < input_sz))
+		{
+			printf("------------------\n");
+			assert(0);
+		}
+		fflush(stdout);
+
+
+		if (i == j)
+			return false;
+
+		return compare_unicode_strings(input + i, input + j);
 	}
 };
 
@@ -126,11 +134,12 @@ public:
 			db.push_back(i);
 		}
 
-		sort(db.begin(), db.end(), compare_input_substrings);
+		sort(db.begin(), db.end(), CmpInputSubstrings());
 
+		CmpInputSubstrings comparator;
 		for (int i = 0; i < input_sz - 1; i ++)
 		{
-			if (compare_input_substrings(db[i+1], db[i]))
+			if (comparator(db[i+1], db[i]))
 			{
 	//			printf("i = %d, i+1 = %d, input[i] = %04x, input[i+1] = %04x\n", i, i+1, input[i], input[i+1]);
 				assert(0);
