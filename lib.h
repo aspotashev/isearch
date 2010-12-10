@@ -114,6 +114,20 @@ private:
 	const char *index_to_string_id(int index);
 	int find_index_by_string(char *s);
 
+	bool file_exists(const char *filename)
+	{
+		FILE *f = fopen(filename, "r");
+		if (f)
+		{
+			fclose(f);
+			return true;
+		}
+		else
+		{
+			return false;
+		}
+	}
+
 private:
 	char_t *input;
 	int input_sz; // in characters
