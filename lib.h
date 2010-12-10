@@ -61,12 +61,20 @@ bool compare_input_substrings(int i, int j)
 
 char_t *search_pattern_string;
 
-bool compare_for_binary_search(int i, int j)
+class CmpForBinarySearch
 {
-	assert(j == -1);
+public:
+	CmpForBinarySearch()
+	{
+	}
 
-	return compare_unicode_strings(input + i, search_pattern_string);
-}
+	bool operator() (int i, int j)
+	{
+		assert(j == -1);
+
+		return compare_unicode_strings(input + i, search_pattern_string);
+	}
+};
 
 class ISearch
 {
@@ -155,7 +163,7 @@ public:
 	//----------------
 
 		search_pattern_string = s_unicode;
-		std::vector<int>::iterator iter = lower_bound(db.begin(), db.end(), -1, compare_for_binary_search);
+		std::vector<int>::iterator iter = lower_bound(db.begin(), db.end(), -1, CmpForBinarySearch());
 		return iter - db.begin();
 	}
 
