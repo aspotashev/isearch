@@ -114,21 +114,8 @@ private:
 	const char *index_to_string_id(int index);
 	int find_index_by_string(char *s);
 
-	bool file_exists(const char *filename)
-	{
-		FILE *f = fopen(filename, "r");
-		if (f)
-		{
-			fclose(f);
-			return true;
-		}
-		else
-		{
-			return false;
-		}
-	}
-
 	void check_search_index_correctness();
+	bool file_exists(const char *filename);
 	void setup_search_index(const char *f_index);
 
 private:
@@ -140,7 +127,7 @@ private:
 };
 
 
-// ------------------- ISearch: methods ----------------
+//------------------- ISearch: methods ----------------
 
 void ISearch::read_dump(const char *f_dump)
 {
@@ -192,6 +179,21 @@ void ISearch::check_search_index_correctness()
 		}
 	}
 }
+
+bool ISearch::file_exists(const char *filename)
+{
+	FILE *f = fopen(filename, "r");
+	if (f)
+	{
+		fclose(f);
+		return true;
+	}
+	else
+	{
+		return false;
+	}
+}
+
 
 void ISearch::setup_search_index(const char *f_index)
 {
