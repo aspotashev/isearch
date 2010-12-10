@@ -40,14 +40,14 @@ protected:
 	}
 };
 
-char_t *search_pattern_string;
 
 class CmpForBinarySearch : public CmpUnicodeBase
 {
 public:
-	CmpForBinarySearch(char_t *input, int input_sz):
+	CmpForBinarySearch(char_t *input, int input_sz, char_t *search_pattern_string):
 		m_input(input),
-		m_input_sz(input_sz)
+		m_input_sz(input_sz),
+		m_search_pattern_string(search_pattern_string)
 	{
 	}
 
@@ -55,12 +55,13 @@ public:
 	{
 		assert(j == -1);
 
-		return compare_unicode_strings(m_input + i, search_pattern_string);
+		return compare_unicode_strings(m_input + i, m_search_pattern_string);
 	}
 
 private:
 	char_t *m_input;
 	int m_input_sz; // in characters
+	char_t *m_search_pattern_string;
 };
 
 class CmpInputSubstrings : public CmpUnicodeBase
@@ -181,8 +182,7 @@ public:
 		*output_part = '\0';
 	//----------------
 
-		search_pattern_string = s_unicode;
-		std::vector<int>::iterator iter = lower_bound(db.begin(), db.end(), -1, CmpForBinarySearch(input, input_sz));
+		std::vector<int>::iterator iter = lower_bound(db.begin(), db.end(), -1, CmpForBinarySearch(input, input_sz, s_unicode));
 		return iter - db.begin();
 	}
 
