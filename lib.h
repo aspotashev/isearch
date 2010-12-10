@@ -114,8 +114,9 @@ private:
 	const char *index_to_string_id(int index);
 	int find_index_by_string(char *s);
 
-	void check_search_index_correctness();
+	void check_search_index_correctness(int *check_db);
 	bool file_exists(const char *filename);
+	void create_search_index(const char *f_index);
 	void setup_search_index(const char *f_index);
 
 private:
@@ -167,14 +168,22 @@ void ISearch::read_dump_map(const char *f_map)
 }
 
 // check that the substrings go in alphabetical order
-void ISearch::check_search_index_correctness()
+void ISearch::check_search_index_correctness(int *check_db = NULL)
 {
+	if (check_db == NULL)
+	{
+		check_db = db; // workaround for default argument
+	}
+
 	CmpInputSubstrings comparator(input, input_sz);
 	for (int i = 0; i < input_sz - 1; i ++)
 	{
-		if (comparator(db[i+1], db[i]))
+		if (comparator(check_db[i+1], check_db[i]))
 		{
-//			printf("i = %d, i+1 = %d, input[i] = %04x, input[i+1] = %04x\n", i, i+1, input[i], input[i+1]);
+			printf("i = %d, i+1 = %d, check_db[i] = %d, check_db[i+1] = %d, first_char(i) = %04x, first_char(i+1) = %04x\n",
+				i, i+1,
+				check_db[i], check_db[i+1],
+				input[check_db[i]], input[check_db[i+1]]);
 			assert(0);
 		}
 	}
@@ -194,17 +203,41 @@ bool ISearch::file_exists(const char *filename)
 	}
 }
 
-
-void ISearch::setup_search_index(const char *f_index)
+void ISearch::create_search_index(const char *f_index)
 {
-	db = new int [input_sz];
+	int *temp_db = new int [input_sz];
 
 	for (int i = 0; i < input_sz; i ++)
 	{
-		db[i] = i;
+		temp_db[i] = i;
 	}
 
-	std::sort(db, db + input_sz, CmpInputSubstrings(input, input_sz));
+	std::sort(temp_db, temp_db + input_sz, CmpInputSubstrings(input, input_sz));
+
+	check_search_index_correctness(temp_db);
+
+	// write dump index to file
+	FILE *f_w = fopen(f_index, "wb");
+	assert(fwrite(temp_db, sizeof(int), input_sz, f_w) == input_sz);
+	fclose(f_w);
+
+	delete [] temp_db;
+}
+
+void ISearch::setup_search_index(const char *f_index)
+{
+	if (!file_exists(f_index))
+	{
+		create_search_index(f_index);
+	}
+
+	// read dump index from file
+	FILE *f = fopen(f_index, "rb");
+
+	db = new int [input_sz];
+	assert(fread(db, sizeof(int), input_sz, f) == input_sz);
+
+	fclose(f);
 
 	check_search_index_correctness();
 }
