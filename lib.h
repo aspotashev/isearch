@@ -14,31 +14,35 @@ typedef unsigned short int char_t;
 char_t *input;
 int input_sz; // in characters
 
-bool compare_unicode_strings(const char_t *a, const char_t *b)
+class CmpUnicodeBase
 {
-	int i = 0;
-	for (i = 0; i < 200; i ++)
+protected:
+	bool compare_unicode_strings(const char_t *a, const char_t *b)
 	{
-		if (a[i] != b[i]) break;
-	}
+		int i = 0;
+		for (i = 0; i < 200; i ++)
+		{
+			if (a[i] != b[i]) break;
+		}
 
-	if (a[i] < b[i])
-	{
-		return true;
+		if (a[i] < b[i])
+		{
+			return true;
+		}
+		else if (a[i] > b[i])
+		{
+			return false;
+		}
+		else
+		{
+			return false;
+		}
 	}
-	else if (a[i] > b[i])
-	{
-		return false;
-	}
-	else
-	{
-		return false;
-	}
-}
+};
 
 char_t *search_pattern_string;
 
-class CmpForBinarySearch
+class CmpForBinarySearch : public CmpUnicodeBase
 {
 public:
 	CmpForBinarySearch(char_t *input, int input_sz):
@@ -59,7 +63,7 @@ private:
 	int m_input_sz; // in characters
 };
 
-class CmpInputSubstrings
+class CmpInputSubstrings : public CmpUnicodeBase
 {
 public:
 	CmpInputSubstrings()
