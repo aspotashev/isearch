@@ -67,7 +67,9 @@ private:
 class CmpInputSubstrings : public CmpUnicodeBase
 {
 public:
-	CmpInputSubstrings()
+	CmpInputSubstrings(char_t *input, int input_sz):
+		m_input(input),
+		m_input_sz(input_sz)
 	{
 	}
 
@@ -75,12 +77,12 @@ public:
 	{
 	//	printf("i = %d, j = %d\n", i, j);
 
-		if (!(i >= 0 && i < input_sz))
+		if (!(i >= 0 && i < m_input_sz))
 		{
 			printf("------------------\n");
 			assert(0);
 		}
-		if (!(j >= 0 && j < input_sz))
+		if (!(j >= 0 && j < m_input_sz))
 		{
 			printf("------------------\n");
 			assert(0);
@@ -91,8 +93,12 @@ public:
 		if (i == j)
 			return false;
 
-		return compare_unicode_strings(input + i, input + j);
+		return compare_unicode_strings(m_input + i, m_input + j);
 	}
+
+private:
+	char_t *m_input;
+	int m_input_sz; // in characters
 };
 
 class ISearch
@@ -145,9 +151,9 @@ public:
 			db.push_back(i);
 		}
 
-		sort(db.begin(), db.end(), CmpInputSubstrings());
+		sort(db.begin(), db.end(), CmpInputSubstrings(input, input_sz));
 
-		CmpInputSubstrings comparator;
+		CmpInputSubstrings comparator(input, input_sz);
 		for (int i = 0; i < input_sz - 1; i ++)
 		{
 			if (comparator(db[i+1], db[i]))
