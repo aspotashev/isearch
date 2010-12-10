@@ -15,12 +15,28 @@ typedef unsigned short int char_t;
 class CmpUnicodeBase
 {
 protected:
-	bool compare_unicode_strings(const char_t *a, const char_t *b)
+	// true  -- a < b
+	// false -- a > b
+	bool compare_unicode_strings(const char_t *a, const char_t *b, int max_length)
 	{
 		int i = 0;
-		for (i = 0; i < 200; i ++)
+
+		if (max_length > 200) // for safety
+			max_length = 200;
+
+		for (i = 0; i < max_length; i ++)
 		{
 			if (a[i] != b[i]) break;
+		}
+
+		if (i == max_length)
+		{
+			// Compare pointers. By doing so, a string in
+			// the end of the input becomes "smaller" that
+			// the one in the middle of the input.
+			// It imitates a zero character at the end
+			// of the input.
+			return b < a;
 		}
 
 		if (a[i] < b[i])
@@ -49,11 +65,22 @@ public:
 	{
 	}
 
+	int search_pattern_length()
+	{
+		int len = 0;
+
+		while (m_search_pattern_string[len] != 0)
+			len ++;
+
+		return len;
+	}
+
 	bool operator() (int i, int j)
 	{
 		assert(j == -1);
 
-		return compare_unicode_strings(m_input + i, m_search_pattern_string);
+		return compare_unicode_strings(m_input + i, m_search_pattern_string,
+			std::min(search_pattern_length(), m_input_sz - i));
 	}
 
 private:
@@ -91,7 +118,8 @@ public:
 		if (i == j)
 			return false;
 
-		return compare_unicode_strings(m_input + i, m_input + j);
+		return compare_unicode_strings(m_input + i, m_input + j,
+			std::min(m_input_sz - i, m_input_sz - j));
 	}
 
 private:
