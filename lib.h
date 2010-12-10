@@ -7,6 +7,8 @@
 #include <algorithm>
 
 #include <iconv.h>
+#include <sys/mman.h>
+#include <fcntl.h>
 
 
 typedef unsigned short int char_t;
@@ -259,13 +261,19 @@ void ISearch::setup_search_index(const char *f_index)
 		create_search_index(f_index);
 	}
 
-	// read dump index from file
-	FILE *f = fopen(f_index, "rb");
+//	// read dump index from file
+//	FILE *f = fopen(f_index, "rb");
+//
+//	db = new int [input_sz];
+//	assert(fread(db, sizeof(int), input_sz, f) == input_sz);
+//
+//	fclose(f);
 
-	db = new int [input_sz];
-	assert(fread(db, sizeof(int), input_sz, f) == input_sz);
 
-	fclose(f);
+	// use mmap instead of reading the file
+	int fd = open(f_index, O_RDONLY);
+	db = (int *)mmap(NULL, sizeof(int) * input_sz, PROT_READ, MAP_SHARED, fd, 0);
+
 
 	check_search_index_correctness();
 }
