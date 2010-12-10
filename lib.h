@@ -41,7 +41,9 @@ char_t *search_pattern_string;
 class CmpForBinarySearch
 {
 public:
-	CmpForBinarySearch()
+	CmpForBinarySearch(char_t *input, int input_sz):
+		m_input(input),
+		m_input_sz(input_sz)
 	{
 	}
 
@@ -49,8 +51,12 @@ public:
 	{
 		assert(j == -1);
 
-		return compare_unicode_strings(input + i, search_pattern_string);
+		return compare_unicode_strings(m_input + i, search_pattern_string);
 	}
+
+private:
+	char_t *m_input;
+	int m_input_sz; // in characters
 };
 
 class CmpInputSubstrings
@@ -172,7 +178,7 @@ public:
 	//----------------
 
 		search_pattern_string = s_unicode;
-		std::vector<int>::iterator iter = lower_bound(db.begin(), db.end(), -1, CmpForBinarySearch());
+		std::vector<int>::iterator iter = lower_bound(db.begin(), db.end(), -1, CmpForBinarySearch(input, input_sz));
 		return iter - db.begin();
 	}
 
