@@ -103,7 +103,7 @@ class ISearch
 {
 public:
 
-	void init_search(const char *f_dump, const char *f_map);
+	void init_search(const char *f_dump, const char *f_index, const char *f_map);
 	const char *find_string_id_by_str(char *s);
 	int get_internal_index_by_string(char *s);
 	const char *get_msg_id_by_internal_index(int index);
@@ -162,7 +162,7 @@ void ISearch::read_dump_map(const char *f_map)
 	fclose(f);
 }
 
-void ISearch::init_search(const char *f_dump, const char *f_map)
+void ISearch::init_search(const char *f_dump, const char *f_index, const char *f_map)
 {
 	read_dump(f_dump);
 	read_dump_map(f_map);
@@ -232,9 +232,9 @@ const char *ISearch::find_string_id_by_str(char *s)
 
 ISearch isearch_instance;
 
-void init_search(const char *f_dump, const char *f_map)
+void init_search(const char *f_dump, const char *f_index, const char *f_map)
 {
-	isearch_instance.init_search(f_dump, f_map);
+	isearch_instance.init_search(f_dump, f_index, f_map);
 }
 
 const char *find_string_id_by_str(char *s)

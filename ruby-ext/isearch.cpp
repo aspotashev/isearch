@@ -4,14 +4,14 @@
 
 #include "../lib.h"
 
-void init_search(const char *f_dump, const char *f_map);
+void init_search(const char *f_dump, const char *f_index, const char *f_map);
 const char *find_string_id_by_str_multiple(char *s, int n);
 
 //-------------------------------
 
-VALUE wrap_init_search(VALUE self, VALUE dump, VALUE map)
+VALUE wrap_init_search(VALUE self, VALUE dump, VALUE index, VALUE map)
 {
-	init_search(StringValuePtr(dump), StringValuePtr(map));
+	init_search(StringValuePtr(dump), StringValuePtr(index), StringValuePtr(map));
 	return Qnil;
 }
 
@@ -34,7 +34,7 @@ extern "C" {
 void Init_isearch()
 {
 	VALUE IndexSearch = rb_define_module("IndexSearch");
-	rb_define_singleton_method(IndexSearch, "init", RUBY_METHOD_FUNC(wrap_init_search), 2);
+	rb_define_singleton_method(IndexSearch, "init", RUBY_METHOD_FUNC(wrap_init_search), 3);
 	rb_define_singleton_method(IndexSearch, "find", RUBY_METHOD_FUNC(wrap_find_string_id), 2);
 }
 
