@@ -11,8 +11,6 @@
 
 typedef unsigned short int char_t;
 
-char_t *input;
-int input_sz; // in characters
 
 class CmpUnicodeBase
 {
@@ -209,6 +207,9 @@ public:
 
 
 private:
+	char_t *input;
+	int input_sz; // in characters
+
 	std::vector<int> db; // main index
 	std::map<int, std::string> pos_to_src;
 };
