@@ -132,7 +132,7 @@ private:
 	char_t *input;
 	int input_sz; // in characters
 
-	std::vector<int> db; // main index
+	int *db; // main index
 	std::map<int, std::string> pos_to_src;
 };
 
@@ -181,12 +181,14 @@ void ISearch::init_search(const char *f_dump, const char *f_index, const char *f
 	read_dump(f_dump);
 	read_dump_map(f_map);
 
+	db = new int [input_sz];
+
 	for (int i = 0; i < input_sz; i ++)
 	{
-		db.push_back(i);
+		db[i] = i;
 	}
 
-	sort(db.begin(), db.end(), CmpInputSubstrings(input, input_sz));
+	std::sort(db, db + input_sz, CmpInputSubstrings(input, input_sz));
 
 	CmpInputSubstrings comparator(input, input_sz);
 	for (int i = 0; i < input_sz - 1; i ++)
@@ -223,8 +225,8 @@ int ISearch::get_internal_index_by_string(char *s)
 	*output_part = '\0';
 //----------------
 
-	std::vector<int>::iterator iter = lower_bound(db.begin(), db.end(), -1, CmpForBinarySearch(input, input_sz, s_unicode));
-	return iter - db.begin();
+	int *iter = std::lower_bound(db, db + input_sz, -1, CmpForBinarySearch(input, input_sz, s_unicode));
+	return iter - db;
 }
 
 const char *ISearch::get_msg_id_by_internal_index(int index)
