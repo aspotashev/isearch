@@ -139,6 +139,7 @@ public:
 	const char *get_msg_id_by_internal_index(int index);
 
 private:
+	long get_file_size(const char *filename);
 	void read_dump(const char *f_dump);
 	void read_dump_map(const char *f_map);
 	const char *index_to_string_id(int index);
@@ -147,6 +148,7 @@ private:
 	void check_search_index_correctness(int *check_db);
 	bool file_exists(const char *filename);
 	void create_search_index(const char *f_index);
+	void *map_file(const char *filename);
 	void setup_search_index(const char *f_index);
 
 private:
@@ -160,18 +162,30 @@ private:
 
 //------------------- ISearch: methods ----------------
 
-void ISearch::read_dump(const char *f_dump)
+long ISearch::get_file_size(const char *filename)
 {
-	FILE *f = fopen(f_dump, "rb");
+	FILE *f = fopen(filename, "rb");
 	assert(f);
 
 	fseek(f, 0, SEEK_END);
-	long sz = ftell(f);
+	long res = ftell(f);
 
+	fclose(f);
+
+
+	return res;
+}
+
+void ISearch::read_dump(const char *f_dump)
+{
+	long sz = get_file_size(f_dump);
 	assert(sz % 2 == 0);
 	input_sz = (int)(sz / 2);
 
-	rewind(f);
+
+	FILE *f = fopen(f_dump, "rb");
+	assert(f);
+
 	input = new char_t[input_sz];
 	assert(fread(input, 1, sz, f) == sz);
 
@@ -254,6 +268,15 @@ void ISearch::create_search_index(const char *f_index)
 	delete [] temp_db;
 }
 
+void *ISearch::map_file(const char *filename)
+{
+	int file_size = get_file_size(filename);
+
+	int fd = open(filename, O_RDONLY);
+	assert(fd != -1);
+	return mmap(NULL, file_size, PROT_READ, MAP_SHARED, fd, 0);
+}
+
 void ISearch::setup_search_index(const char *f_index)
 {
 	if (!file_exists(f_index))
@@ -271,8 +294,7 @@ void ISearch::setup_search_index(const char *f_index)
 
 
 	// use mmap instead of reading the file
-	int fd = open(f_index, O_RDONLY);
-	db = (int *)mmap(NULL, sizeof(int) * input_sz, PROT_READ, MAP_SHARED, fd, 0);
+	db = (int *)map_file(f_index);
 
 
 	check_search_index_correctness();
