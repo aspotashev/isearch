@@ -183,13 +183,17 @@ void ISearch::read_dump(const char *f_dump)
 	input_sz = (int)(sz / 2);
 
 
-	FILE *f = fopen(f_dump, "rb");
-	assert(f);
+//	FILE *f = fopen(f_dump, "rb");
+//	assert(f);
+//
+//	input = new char_t[input_sz];
+//	assert(fread(input, 1, sz, f) == sz);
+//
+//	fclose(f);
 
-	input = new char_t[input_sz];
-	assert(fread(input, 1, sz, f) == sz);
 
-	fclose(f);
+	// use mmap instead of reading the file
+	input = (char_t *)map_file(f_dump);
 }
 
 void ISearch::read_dump_map(const char *f_map)
