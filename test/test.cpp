@@ -1,8 +1,8 @@
-#include "lib.h"
+#include "../src/lib.h"
 
 int main()
 {
-	init_search("../dump.dat", "../dump-index.dat", "../dump-map.txt");
+	init_search("../../dump.dat", "../../dump-index.dat", "../../dump-map.txt");
 
 
 	printf("start...\n");

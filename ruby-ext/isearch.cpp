@@ -2,7 +2,7 @@
 
 #include "ruby.h"
 
-#include "../lib.h"
+#include "../src/lib.h"
 
 void init_search(const char *f_dump, const char *f_index, const char *f_map);
 const char *find_string_id_by_str_multiple(char *s, int n);
