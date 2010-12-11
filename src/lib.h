@@ -106,12 +106,12 @@ public:
 
 		if (!(i >= 0 && i < m_input_sz))
 		{
-			printf("------------------\n");
+			printf("------------------ i = %d, m_input_sz = %d\n", i, m_input_sz);
 			assert(0);
 		}
 		if (!(j >= 0 && j < m_input_sz))
 		{
-			printf("------------------\n");
+			printf("------------------ j = %d, m_input_sz = %d\n", j, m_input_sz);
 			assert(0);
 		}
 
