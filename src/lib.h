@@ -114,7 +114,6 @@ public:
 			printf("------------------\n");
 			assert(0);
 		}
-		fflush(stdout);
 
 
 		if (i == j)
