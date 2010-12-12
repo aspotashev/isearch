@@ -19,10 +19,11 @@ VALUE wrap_find_string_id(VALUE self, VALUE str, VALUE num)
 {
 	int n = FIX2INT(num);
 
-	VALUE res = rb_ary_new();
+	VALUE res = rb_ary_new(); // create array
 	for (int index = get_internal_index_by_string(StringValuePtr(str)), i = 0;
 		i < n; index ++, i ++)
 	{
+		// append to array
 		rb_ary_push(res, rb_str_new2(get_msg_id_by_internal_index(index)));
 	}
 	return res;
