@@ -20,7 +20,7 @@ VALUE wrap_find_string_id(VALUE self, VALUE str, VALUE num)
 	int n = FIX2INT(num);
 
 	VALUE res = rb_ary_new(); // create array
-	for (int index = get_internal_index_by_string(StringValuePtr(str)), i = 0;
+	for (int index = get_internal_index_by_string(StringValuePtr(str)) - n/2, i = 0; // HACK
 		i < n; index ++, i ++)
 	{
 		// append to array
