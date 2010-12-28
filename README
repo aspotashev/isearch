@@ -1,0 +1,11 @@
+== What is isearch
+Isearch is an 'index searcher'.
+
+== How to build isearch
+
+ cd ruby-ext
+ ruby extconf.rb     # generate Makefile
+ make
+
+The final 'make' command will create the shared library
+isearch.so, which is also a Ruby extension.
