@@ -252,6 +252,7 @@ bool ISearch::file_exists(const char *filename)
 
 void ISearch::create_search_index(const char *f_index)
 {
+	printf("Allocating %d bytes for temp_db\n", input_sz * sizeof(int));
 	int *temp_db = new int [input_sz];
 
 	for (int i = 0; i < input_sz; i ++)
@@ -275,9 +276,19 @@ void *ISearch::map_file(const char *filename)
 {
 	int file_size = get_file_size(filename);
 
+	// mmap
 	int fd = open(filename, O_RDONLY);
 	assert(fd != -1);
 	return mmap(NULL, file_size, PROT_READ, MAP_SHARED, fd, 0);
+
+	// read from file ("safe mode")
+/*	printf("Allocating %d bytes for %s\n", file_size * sizeof(char), filename);
+	char *buf = new char[file_size];
+	FILE *f = fopen(filename, "rb");
+	fread(buf, 1, file_size, f);
+	fclose(f);
+
+	return buf;*/
 }
 
 void ISearch::setup_search_index(const char *f_index)
